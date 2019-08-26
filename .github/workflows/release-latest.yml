@@ -1,0 +1,47 @@
+name: Package master on push
+
+on: 
+  push:
+    branchs:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - uses: actions/setup-node@v1
+      with:
+        registry-url: 'https://registry.npmjs.org'
+    - name: Install Dependency
+      run: npm install
+    - name: Make
+      run: |
+        REMOTE=`git remote get-url origin`
+
+        rm release -rf
+        mkdir release
+
+        cp package.json release
+        cp dist -r release
+
+        cp action/* -r release
+
+        ls release -al
+        cd release
+
+        npm install --production
+        rm package.json
+        rm package-lock.json
+
+        git init
+        git remote add origin $REMOTE
+        git checkout -b latest
+        git add .
+        git commit -m "Release latest"
+        git push origin latest -f
+
+        cd ../
+        rm release -rf
