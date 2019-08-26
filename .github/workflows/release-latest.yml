@@ -21,7 +21,7 @@ jobs:
       run: npm run build
     - name: Make
       run: |
-        REMOTE=`git remote get-url origin`
+        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/HairyRabbit/actions.git
 
         rm release -rf
         mkdir release
@@ -49,3 +49,5 @@ jobs:
 
         cd ../
         rm release -rf
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
