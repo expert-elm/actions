@@ -41,7 +41,7 @@ jobs:
         git init
         git remote add origin $REMOTE
         git checkout -b latest
-        git commit -am "Release latest" --author="Rabbit <yfhj1990@hotmail.com>"
+        git commit --author="Rabbit <yfhj1990@hotmail.com>"  -a -m "Release latest" 
         git push origin latest -f
 
         cd ../
