@@ -1,22 +1,28 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as io from '@actions/io'
-import path from 'path'
+import * as path from 'path'
+import * as fs from 'fs'
 
-async function main() {
+const DEFAULT_CONTEXT: string = '.'
+
+export default async function main() {
   try {
     await io.which('npm', true)
     await io.which('git', true)
 
-    const context = core.getInput('context')
+    const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
-    const isCurrentDir = context === '.'
+    const isCurrentContext = context === '.'
 
-    const currentVersion = exec('npm view . version')
-    const currentCommit = exec('git rev-parse --verify --short HEAD')
+    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+    const currentVersion = getVersion(pkg.version)
+    core.debug(`Version: ${currentVersion}`)
+    const currentCommit = await exec('git rev-parse --verify --short HEAD')
+    core.debug(`Commit: ${currentCommit}`)
     exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
     
-    if(!isCurrentDir) {
+    if(!isCurrentContext) {
       await io.cp('./package.json', path.join(context, 'package.json'))
       await io.cp('./README.md', path.join(context, 'README.md'))
       await io.cp('./LICENSE', path.join(context, 'LICENSE'))
@@ -26,6 +32,13 @@ async function main() {
   } catch (error) {
     core.setFailed(error.message)
   }
+}
+
+export function getVersion(version: string): string {
+  const re = /(\d+\.\d+\.\d+)/
+  const ma = version.match(re)
+  if(null === ma) throw new Error(`Bad version string`)
+  return ma[1]
 }
 
 main()

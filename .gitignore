@@ -62,7 +62,3 @@ typings/
 
 # build directory
 dist
-
-# test temps example
-test
-example
