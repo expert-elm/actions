@@ -1,0 +1,28 @@
+{
+  "private": true,
+  "name": "actions",
+  "version": "0.0.0",
+  "description": "Common GitHub actions",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HairyRabbit/actions.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HairyRabbit/actions/issues"
+  },
+  "homepage": "https://github.com/HairyRabbit/actions#readme",
+  "dependencies": {
+    "@actions/core": "^1.0.0",
+    "@actions/exec": "^1.0.0",
+    "@actions/io": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.2"
+  }
+}

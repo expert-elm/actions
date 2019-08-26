@@ -1,0 +1,10 @@
+name: 'Release master branch'
+description: 'Release @master tag to npm from master branch'
+author: 'Rabbit <yfhj1990@hotmail.com>'
+inputs:
+  context:
+    description: 'Bundle context, default to current directory'
+    default: '.'
+runs:
+  using: 'node12'
+  main: 'dist/release-master.js'
