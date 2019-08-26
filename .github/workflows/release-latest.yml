@@ -17,6 +17,8 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - name: Install Dependency
       run: npm install
+    - name: Build
+      run: npm run dist
     - name: Make
       run: |
         REMOTE=`git remote get-url origin`
