@@ -5,6 +5,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 const DEFAULT_CONTEXT: string = '.'
+const DEFAULT_TAG: string = 'master'
 
 export default async function main() {
   try {
@@ -28,7 +29,10 @@ export default async function main() {
       await io.cp('./LICENSE', path.join(context, 'LICENSE'))
     }
 
-    await exec(`npm publish`, undefined, { cwd: context })
+    const tag = core.getInput('tag') || DEFAULT_TAG
+    core.debug(`Tag: ${tag}`)
+
+    await exec(`npm publish ${tag ? `--tag ${tag}` : ''}`, undefined, { cwd: context })
   } catch (error) {
     core.setFailed(error.message)
   }
