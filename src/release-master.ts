@@ -5,6 +5,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 const DEFAULT_CONTEXT: string = '.'
+const DEFAULT_TAG: string = 'master'
 
 export default async function main() {
   try {
@@ -18,9 +19,18 @@ export default async function main() {
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
     const currentVersion = getVersion(pkg.version)
     core.debug(`Version: ${currentVersion}`)
-    const currentCommit = await exec('git rev-parse --verify --short HEAD')
+
+    let currentCommit: string = ''
+    await exec('git rev-parse --verify --short HEAD', undefined, {
+      listeners: {
+        stdout: (data: Buffer) => {
+          currentCommit += data.toString()
+        }
+      }
+    })
     core.debug(`Commit: ${currentCommit}`)
-    exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
+    await exec(`echo Publish version: ${currentVersion}-${currentCommit}`)
+    await exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
     
     if(!isCurrentContext) {
       await io.cp('./package.json', path.join(context, 'package.json'))
@@ -28,7 +38,10 @@ export default async function main() {
       await io.cp('./LICENSE', path.join(context, 'LICENSE'))
     }
 
-    await exec(`npm publish`, undefined, { cwd: context })
+    const tag = core.getInput('tag') || DEFAULT_TAG
+    core.debug(`Tag: ${tag}`)
+
+    await exec(`npm publish ${tag ? `--tag ${tag}` : ''}`, undefined, { cwd: context })
   } catch (error) {
     core.setFailed(error.message)
   }

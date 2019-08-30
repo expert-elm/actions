@@ -5,6 +5,9 @@ inputs:
   context:
     description: 'Bundle context, default to current directory'
     default: '.'
+  tag:
+    description: 'Publish tag'
+    default: 'master'
 runs:
   using: 'node12'
   main: '../dist/release-master.js'
