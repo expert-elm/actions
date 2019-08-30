@@ -21,6 +21,7 @@ export default async function main() {
     core.debug(`Version: ${currentVersion}`)
     const currentCommit = await exec('git rev-parse --verify --short HEAD')
     core.debug(`Commit: ${currentCommit}`)
+    await exec(`echo Publish version: ${currentVersion}-${currentCommit}`)
     await exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
     
     if(!isCurrentContext) {
