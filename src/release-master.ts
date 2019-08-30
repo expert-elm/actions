@@ -19,7 +19,15 @@ export default async function main() {
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
     const currentVersion = getVersion(pkg.version)
     core.debug(`Version: ${currentVersion}`)
-    const currentCommit = await exec('git rev-parse --verify --short HEAD')
+
+    let currentCommit: string = ''
+    await exec('git rev-parse --verify --short HEAD', undefined, {
+      listeners: {
+        stdout: (data: Buffer) => {
+          currentCommit += data.toString()
+        }
+      }
+    })
     core.debug(`Commit: ${currentCommit}`)
     await exec(`echo Publish version: ${currentVersion}-${currentCommit}`)
     await exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
