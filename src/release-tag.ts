@@ -21,7 +21,7 @@ export default async function main() {
 
     const version = getVersion()
 
-    const gh = new GitHub({ auth: process.env.GITHUB_TOKEN })
+    const gh = new GitHub({ auth: () => `token ${process.env.GITHUB_TOKEN}` })
     const user = await getUser(gh)
     await exec(COMMAND_GIT_CONFIG(user.name, user.email))
     await exec(COMMAND_NPM_VERSION(version))
@@ -41,8 +41,6 @@ export default async function main() {
 }
 
 async function getUser(gh: GitHub): Promise<{ name: string, email: string }> {
-  
-
   const { data: { name, email }} = await gh.users.getAuthenticated()
   return { name, email }
 }
