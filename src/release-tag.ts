@@ -1,13 +1,10 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
-import getExecResult from './exec-result'
-import getVersion from './pkg-version'
 import * as io from '@actions/io'
 import * as path from 'path'
+import getExecResult from './exec-result'
 
 const DEFAULT_CONTEXT: string = '.'
-const COMMAND_GIT_LAST_TAG: string = 'git tag --sort=v:refname | tail -n1'
-const COMMAND_GIT_CHECKOUT: string = 'git checkout'
 const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version from-git'
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
@@ -20,17 +17,8 @@ export default async function main() {
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
 
-    const ver = getVersion()
-    const re = new RegExp(ver.replace(/\./g, '\\\.'))
-    const tag = await getExecResult(COMMAND_GIT_LAST_TAG)
-    await exec(`echo Tag: ${tag}`)
-
-    if(re.test(tag)) {
-      await exec('echo version matched, no need to release')
-      return
-    }
-    
-    await exec(COMMAND_GIT_CHECKOUT + ' ' + tag)
+    const logs = await getExecResult('git log --oneline')
+    await exec(`echo ${logs}`)
     await exec(COMMAND_NPM_VERSION)
     
     if(!isCurrentContext) {
