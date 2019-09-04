@@ -15,14 +15,19 @@ export default async function main() {
     await io.which('npm', true)
     await io.which('git', true)
 
+    await exec('set')
+
     const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
 
     const version = getVersion()
+    core.debug(`Version: ${version}`)
 
     const gh = new GitHub({ auth: () => `token ${process.env.GITHUB_TOKEN}` })
     const user = await getUser(gh)
+    core.debug(`User: ${user}`)
+
     await exec(COMMAND_GIT_CONFIG(user.name, user.email))
     await exec(COMMAND_NPM_VERSION(version))
     
