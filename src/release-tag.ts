@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as io from '@actions/io'
-import getExecResult from './exec-result'
 import * as path from 'path'
 import * as fs from 'fs'
 
@@ -21,7 +20,14 @@ export default async function main() {
     const currentVersion = getVersion(pkg.version)
     core.debug(`Version: ${currentVersion}`)
 
-    const currentCommit: string = await getExecResult('git rev-parse --verify --short HEAD')
+    let currentCommit: string = ''
+    await exec('git rev-parse --verify --short HEAD', undefined, {
+      listeners: {
+        stdout: (data: Buffer) => {
+          currentCommit += data.toString()
+        }
+      }
+    })
     core.debug(`Commit: ${currentCommit}`)
     await exec(`echo Publish version: ${currentVersion}-${currentCommit}`)
     await exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
