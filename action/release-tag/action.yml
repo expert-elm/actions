@@ -5,6 +5,10 @@ inputs:
   context:
     description: 'Bundle context, default to current directory'
     default: '.'
+  name:
+    description: 'Release name'
+  body:
+    description: 'Release body'
 runs:
   using: 'node12'
   main: '../dist/release-tag.js'

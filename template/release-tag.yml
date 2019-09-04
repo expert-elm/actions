@@ -2,8 +2,8 @@ name: Publish master barnch
 
 on: 
   push:
-    tags:
-      - *
+    branches:
+      - 'release/*'
 
 jobs:
   build:
