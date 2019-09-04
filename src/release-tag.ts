@@ -4,6 +4,7 @@ import * as io from '@actions/io'
 import * as path from 'path'
 
 const DEFAULT_CONTEXT: string = '.'
+const COMMAND_GIT_FETCH_TAGS: string = 'git fetch --tags'
 const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version from-git'
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
@@ -16,6 +17,7 @@ export default async function main() {
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
 
+    await exec(COMMAND_GIT_FETCH_TAGS)
     await exec(COMMAND_NPM_VERSION)
     
     if(!isCurrentContext) {
