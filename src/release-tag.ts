@@ -4,7 +4,7 @@ import * as io from '@actions/io'
 import * as path from 'path'
 
 const DEFAULT_CONTEXT: string = '.'
-const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version version from-git'
+const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version from-git'
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
