@@ -2,10 +2,10 @@ import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as io from '@actions/io'
 import * as path from 'path'
-import * as fs from 'fs'
 
 const DEFAULT_CONTEXT: string = '.'
-const DEFAULT_TAG: string = 'master'
+const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version from-git'
+const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
   try {
@@ -16,21 +16,7 @@ export default async function main() {
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
 
-    const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-    const currentVersion = getVersion(pkg.version)
-    core.debug(`Version: ${currentVersion}`)
-
-    let currentCommit: string = ''
-    await exec('git rev-parse --verify --short HEAD', undefined, {
-      listeners: {
-        stdout: (data: Buffer) => {
-          currentCommit += data.toString()
-        }
-      }
-    })
-    core.debug(`Commit: ${currentCommit}`)
-    await exec(`echo Publish version: ${currentVersion}-${currentCommit}`)
-    await exec(`npm --no-git-tag-version version ${currentVersion}-${currentCommit}`)
+    await exec(COMMAND_NPM_VERSION)
     
     if(!isCurrentContext) {
       await io.cp('./package.json', path.join(context, 'package.json'))
@@ -38,20 +24,10 @@ export default async function main() {
       await io.cp('./LICENSE', path.join(context, 'LICENSE'))
     }
 
-    const tag = core.getInput('tag') || DEFAULT_TAG
-    core.debug(`Tag: ${tag}`)
-
-    await exec(`npm publish ${tag ? `--tag ${tag}` : ''}`, undefined, { cwd: context })
+    await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
   } catch (error) {
     core.setFailed(error.message)
   }
-}
-
-export function getVersion(version: string): string {
-  const re = /(\d+\.\d+\.\d+)/
-  const ma = version.match(re)
-  if(null === ma) throw new Error(`Bad version string`)
-  return ma[1]
 }
 
 main()

@@ -1,5 +1,5 @@
 name: 'Release tag'
-description: 'Release tag to npm'
+description: 'Release verion to npm from git tags'
 author: 'Rabbit <yfhj1990@hotmail.com>'
 inputs:
   context:
@@ -7,4 +7,4 @@ inputs:
     default: '.'
 runs:
   using: 'node12'
-  main: '../dist/release-master.js'
+  main: '../dist/release-tag.js'
