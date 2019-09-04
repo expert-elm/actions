@@ -2,10 +2,9 @@ import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as io from '@actions/io'
 import * as path from 'path'
-import getExecResult from './exec-result'
 
 const DEFAULT_CONTEXT: string = '.'
-const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version from-git'
+const COMMAND_NPM_VERSION: string = 'npm --no-git-tag-version version version from-git'
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
@@ -16,9 +15,6 @@ export default async function main() {
     const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
-
-    const logs = await getExecResult('git log --oneline')
-    await exec(`echo ${logs}`)
     await exec(COMMAND_NPM_VERSION)
     
     if(!isCurrentContext) {
