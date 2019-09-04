@@ -24,7 +24,12 @@ export default async function main() {
     const re = new RegExp(ver.replace(/\./g, '\\\.'))
     const tag = await getExecResult(COMMAND_GIT_LAST_TAG)
     await exec(`echo Tag: ${tag}`)
-    if(re.test(tag)) return await exec('echo version matched, no need to release')
+
+    if(re.test(tag)) {
+      await exec('echo version matched, no need to release')
+      return
+    }
+    
     await exec(COMMAND_GIT_CHECKOUT + ' ' + tag)
     await exec(COMMAND_NPM_VERSION)
     
