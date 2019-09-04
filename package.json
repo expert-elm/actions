@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "common-actions",
-  "version": "0.0.0",
+  "version": "0.0.0-master.2cbcf68",
   "description": "Common GitHub actions",
   "scripts": {
     "start": "tsc -w",
