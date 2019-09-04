@@ -15,8 +15,6 @@ export default async function main() {
     await io.which('npm', true)
     await io.which('git', true)
 
-    await exec('set')
-
     const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
