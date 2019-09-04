@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import getExecResult from './exec-result'
+import getVersion from './pkg-version'
 import * as io from '@actions/io'
 import * as path from 'path'
 
@@ -19,7 +20,11 @@ export default async function main() {
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
 
+    const ver = getVersion()
+    const re = new RegExp(ver.replace(/\./g, '\\\.'))
     const tag = await getExecResult(COMMAND_GIT_LAST_TAG)
+    await exec(`echo Tag: ${tag}`)
+    if(re.test(tag)) return await exec('echo version matched, no need to release')
     await exec(COMMAND_GIT_CHECKOUT + ' ' + tag)
     await exec(COMMAND_NPM_VERSION)
     
