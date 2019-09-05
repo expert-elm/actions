@@ -8,10 +8,10 @@ import getExecResult from './exec-result'
 const DEFAULT_CONTEXT: string = '.'
 const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
 const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${process.env.GITHUB_REF}`
-const COMMAND_GIT_CONFIG = (name: string, email: string): string => `git config user.email "${email}" && git config user.name "${name}"`
-// const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
+const COMMAND_GIT_CONFIG = (name: string, email: string): string => `git config --global user.email "${email}" && git config --global user.name "${name}"`
+const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
-// const COMMAND_NPM_PUBLISH: string = 'npm publish'
+const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
   try {
@@ -29,13 +29,11 @@ export default async function main() {
     const version = getVersion()
     core.debug(`Version: ${version}`)
 
-    // const gh = new GitHub({ auth: `token ${token}` })
-    // const user = await getUser(gh)
-    // core.debug(`User: ${user}`)
     const name = await getExecResult(COMMAND_GIT_USER)
     const email = await getExecResult(COMMAND_GIT_EMAIL)
-
+    await exec(`echo ${name}, ${email}`)
     await exec(COMMAND_GIT_CONFIG(name, email))
+
     await exec(COMMAND_NPM_VERSION(version))
     
     if(!isCurrentContext) {
@@ -44,18 +42,14 @@ export default async function main() {
       await io.cp('./LICENSE', path.join(context, 'LICENSE'))
     }
 
-    // await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
-    // await exec(COMMAND_GIT_PUSH(token))
-    // await release(gh, version, core.getInput('name'), core.getInput('body'))
+    const gh = new GitHub({ auth: `token ${token}` })
+    await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
+    await exec(COMMAND_GIT_PUSH(token))
+    await release(gh, version, core.getInput('name'), core.getInput('body'))
   } catch (error) {
     core.error(error)
     core.setFailed(error.message)
   }
-}
-
-export async function getUser(gh: GitHub): Promise<{ name: string, email: string }> {
-  const { data: { name, email }} = await gh.users.getAuthenticated()
-  return { name, email }
 }
 
 function getVersion(): string {
