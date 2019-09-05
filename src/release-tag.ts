@@ -3,8 +3,11 @@ import { exec } from '@actions/exec'
 import * as GitHub from '@octokit/rest'
 import * as io from '@actions/io'
 import * as path from 'path'
+import getExecResult from './exec-result'
 
 const DEFAULT_CONTEXT: string = '.'
+const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
+const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${process.env.GITHUB_REF}`
 const COMMAND_GIT_CONFIG = (name: string, email: string): string => `git config user.email "${email}" && git config user.name "${name}"`
 // const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
@@ -26,11 +29,13 @@ export default async function main() {
     const version = getVersion()
     core.debug(`Version: ${version}`)
 
-    const gh = new GitHub({ auth: `token ${token}` })
-    const user = await getUser(gh)
-    core.debug(`User: ${user}`)
+    // const gh = new GitHub({ auth: `token ${token}` })
+    // const user = await getUser(gh)
+    // core.debug(`User: ${user}`)
+    const name = await getExecResult(COMMAND_GIT_USER)
+    const email = await getExecResult(COMMAND_GIT_EMAIL)
 
-    await exec(COMMAND_GIT_CONFIG(user.name, user.email))
+    await exec(COMMAND_GIT_CONFIG(name, email))
     await exec(COMMAND_NPM_VERSION(version))
     
     if(!isCurrentContext) {
@@ -48,7 +53,7 @@ export default async function main() {
   }
 }
 
-async function getUser(gh: GitHub): Promise<{ name: string, email: string }> {
+export async function getUser(gh: GitHub): Promise<{ name: string, email: string }> {
   const { data: { name, email }} = await gh.users.getAuthenticated()
   return { name, email }
 }
