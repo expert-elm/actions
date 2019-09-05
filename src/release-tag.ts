@@ -15,8 +15,6 @@ export default async function main() {
     await io.which('npm', true)
     await io.which('git', true)
 
-    await exec(`echo ${JSON.stringify(process.env.GITHUB_TOKEN!.split('').join(''))}`)
-
     const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
@@ -37,10 +35,11 @@ export default async function main() {
       await io.cp('./LICENSE', path.join(context, 'LICENSE'))
     }
 
-    await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
-    await exec(COMMAND_GIT_PUSH)
-    await release(gh, version, core.getInput('name'), core.getInput('body'))
+    // await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
+    // await exec(COMMAND_GIT_PUSH)
+    // await release(gh, version, core.getInput('name'), core.getInput('body'))
   } catch (error) {
+    core.error(error)
     core.setFailed(error.message)
   }
 }
