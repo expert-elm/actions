@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
-import * as GitHub from '@octokit/rest'
-// import * as github from '@actions/github'
+import * as github from '@actions/github'
 import * as io from '@actions/io'
 import * as path from 'path'
 
@@ -27,7 +26,7 @@ export default async function main() {
     const version = getVersion()
     core.debug(`Version: ${version}`)
 
-    const gh = new GitHub({ auth: `token ${token}` })
+    const gh = new github.GitHub(token)
     const user = await getUser(gh)
     core.debug(`User: ${user}`)
 
@@ -49,7 +48,7 @@ export default async function main() {
   }
 }
 
-async function getUser(gh: GitHub): Promise<{ name: string, email: string }> {
+async function getUser(gh: github.GitHub): Promise<{ name: string, email: string }> {
   const { data: { name, email }} = await gh.users.getAuthenticated()
   return { name, email }
 }
@@ -62,7 +61,7 @@ function getVersion(): string {
   return ver
 }
 
-async function release(gh: GitHub, version: string, name?: string, body?: string): Promise<void> {
+async function release(gh: github.GitHub, version: string, name?: string, body?: string): Promise<void> {
   const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
   await gh.repos.createRelease({
     owner,
