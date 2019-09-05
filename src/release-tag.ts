@@ -6,9 +6,9 @@ import * as path from 'path'
 
 const DEFAULT_CONTEXT: string = '.'
 const COMMAND_GIT_CONFIG = (name: string, email: string): string => `git config user.email "${email}" && git config user.name "${name}"`
-const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
+// const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
-const COMMAND_NPM_PUBLISH: string = 'npm publish'
+// const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
   try {
@@ -61,7 +61,7 @@ function getVersion(): string {
   return ver
 }
 
-async function release(gh: github.GitHub, version: string, name?: string, body?: string): Promise<void> {
+export async function release(gh: github.GitHub, version: string, name?: string, body?: string): Promise<void> {
   const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
   await gh.repos.createRelease({
     owner,
