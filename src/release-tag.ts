@@ -4,7 +4,7 @@ import * as GitHub from '@octokit/rest'
 import * as io from '@actions/io'
 import * as path from 'path'
 import getExecResult from './exec-result'
-import { matchVersion } from './pkg-version';
+import { matchVersion } from './pkg-version'
 
 const DEFAULT_CONTEXT: string = '.'
 const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
@@ -20,7 +20,7 @@ export default async function main() {
     await io.which('npm', true)
     await io.which('git', true)
 
-    const token = core.getInput('token')
+    const token = core.getInput('token') || process.env.GITHUB_TOKEN
     if(undefined === token) throw new Error(`token was required`)
     core.debug(`Token: ${token}`)
 

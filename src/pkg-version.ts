@@ -4,7 +4,7 @@ export const VERSION_REGEXP: RegExp = /(\d+\.\d+\.\d+)/
 
 export default function getVersion(): string {
   const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-  return matchVersion(pkg)
+  return matchVersion(pkg.version)
 }
 
 export function matchVersion(version: string): string {
