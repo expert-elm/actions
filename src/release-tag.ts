@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as GitHub from '@octokit/rest'
+// import * as github from '@actions/github'
 import * as io from '@actions/io'
 import * as path from 'path'
 
@@ -17,7 +18,7 @@ export default async function main() {
 
     const token = core.getInput('token')
     if(undefined === token) throw new Error(`token was required`)
-    core.debug(`Context: ${token}`)
+    core.debug(`Token: ${token}`)
 
     const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
@@ -26,7 +27,7 @@ export default async function main() {
     const version = getVersion()
     core.debug(`Version: ${version}`)
 
-    const gh = new GitHub({ auth: () => `token ${token}` })
+    const gh = new GitHub({ auth: `token ${token}` })
     const user = await getUser(gh)
     core.debug(`User: ${user}`)
 
