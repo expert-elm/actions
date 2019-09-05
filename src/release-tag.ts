@@ -8,7 +8,8 @@ import getExecResult from './exec-result'
 const DEFAULT_CONTEXT: string = '.'
 const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
 const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${process.env.GITHUB_REF}`
-const COMMAND_GIT_CONFIG = (name: string, email: string): string => `git config --global user.email "${email}" && git config --global user.name "${name}"`
+const COMMAND_GIT_CONFIG_USER = (name: string): string => `git config user.name "${name}"`
+const COMMAND_GIT_CONFIG_EMAIL = (email: string): string => `git config user.email "${email}"`
 const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
@@ -31,8 +32,8 @@ export default async function main() {
 
     const name = await getExecResult(COMMAND_GIT_USER)
     const email = await getExecResult(COMMAND_GIT_EMAIL)
-    await exec(`echo ${name}, ${email}`)
-    await exec(COMMAND_GIT_CONFIG(name, email))
+    await exec(COMMAND_GIT_CONFIG_USER(name))
+    await exec(COMMAND_GIT_CONFIG_EMAIL(email))
 
     await exec(COMMAND_NPM_VERSION(version))
     
