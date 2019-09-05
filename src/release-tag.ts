@@ -11,8 +11,8 @@ const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
 const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${process.env.GITHUB_REF}`
 const COMMAND_GIT_CONFIG_USER = (name: string): string => `git config user.name "${name}"`
 const COMMAND_GIT_CONFIG_EMAIL = (email: string): string => `git config user.email "${email}"`
-const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
+const COMMAND_GIT_PUSH = (token: string, version: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin ${version}`
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
@@ -46,7 +46,7 @@ export default async function main() {
 
     const gh = new GitHub({ auth: `token ${token}` })
     await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
-    await exec(COMMAND_GIT_PUSH(token))
+    await exec(COMMAND_GIT_PUSH(token, version))
     await release(gh, version, core.getInput('name'), core.getInput('body'))
   } catch (error) {
     core.error(error)
