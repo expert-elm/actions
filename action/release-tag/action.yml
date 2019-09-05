@@ -5,6 +5,8 @@ inputs:
   context:
     description: 'Bundle context, default to current directory'
     default: '.'
+  token:
+    description: 'GitHub token'
   name:
     description: 'Release name'
   body:

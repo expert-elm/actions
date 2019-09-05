@@ -6,7 +6,7 @@ import * as path from 'path'
 
 const DEFAULT_CONTEXT: string = '.'
 const COMMAND_GIT_CONFIG = (name: string, email: string): string => `git config user.email "${email}" && git config user.name "${name}"`
-const COMMAND_GIT_PUSH: string = `git -c http.extraheader="AUTHORIZATION: basic ${process.env.GITHUB_TOKEN}" push origin master`
+const COMMAND_GIT_PUSH = (token: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin master`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
@@ -15,6 +15,10 @@ export default async function main() {
     await io.which('npm', true)
     await io.which('git', true)
 
+    const token = core.getInput('token')
+    if(undefined === token) throw new Error(`token was required`)
+    core.debug(`Context: ${token}`)
+
     const context = core.getInput('context') || DEFAULT_CONTEXT
     core.debug(`Context: ${context}`)
     const isCurrentContext = context === '.'
@@ -22,7 +26,7 @@ export default async function main() {
     const version = getVersion()
     core.debug(`Version: ${version}`)
 
-    const gh = new GitHub({ auth: () => `token ${process.env.GITHUB_TOKEN}` })
+    const gh = new GitHub({ auth: () => `token ${token}` })
     const user = await getUser(gh)
     core.debug(`User: ${user}`)
 
@@ -36,7 +40,7 @@ export default async function main() {
     }
 
     // await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
-    // await exec(COMMAND_GIT_PUSH)
+    // await exec(COMMAND_GIT_PUSH(token))
     // await release(gh, version, core.getInput('name'), core.getInput('body'))
   } catch (error) {
     core.error(error)
