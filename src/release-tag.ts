@@ -4,6 +4,7 @@ import * as GitHub from '@octokit/rest'
 import * as io from '@actions/io'
 import * as path from 'path'
 import getExecResult from './exec-result'
+import { matchVersion } from './pkg-version';
 
 const DEFAULT_CONTEXT: string = '.'
 const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
@@ -58,7 +59,7 @@ function getVersion(): string {
   if(undefined === ref) throw new Error(`Not ref found in process.env`)
   const ver = ref.split('/').pop()
   if(undefined === ver) throw new Error(`Not match version`)
-  return ver
+  return matchVersion(ver)
 }
 
 export async function release(gh: GitHub, version: string, name?: string, body?: string): Promise<void> {
