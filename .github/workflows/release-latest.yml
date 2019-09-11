@@ -4,6 +4,9 @@ on:
   push:
     branchs:
       - master
+  pull_request:
+    branchs:
+      - master
 
 jobs:
   build:
@@ -21,7 +24,7 @@ jobs:
       run: npm run build
     - name: Make
       run: |
-        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/HairyRabbit/actions.git
+        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/$GITHUB_ACTOR/actions.git
 
         rm release -rf
         mkdir release
