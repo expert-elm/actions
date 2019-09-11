@@ -21,7 +21,7 @@ jobs:
       run: npm run build
     - name: Make
       run: |
-        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/GITHUB_ACTOR/actions.git
+        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/$GITHUB_ACTOR/actions.git
 
         rm release -rf
         mkdir release
