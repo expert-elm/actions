@@ -8,6 +8,9 @@ inputs:
   tag:
     description: 'Publish tag'
     default: 'master'
+  gh-package:
+    description: 'Also publish to GitHub package registry'
+    default: true
 runs:
   using: 'node12'
   main: '../dist/release-master.js'
