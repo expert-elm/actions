@@ -1,0 +1,16 @@
+name: 'Release tag'
+description: 'Release verion to npm from git tags'
+author: 'Rabbit <yfhj1990@hotmail.com>'
+inputs:
+  context:
+    description: 'Bundle context, default to current directory'
+    default: '.'
+  token:
+    description: 'GitHub token'
+  name:
+    description: 'Release name'
+  body:
+    description: 'Release body'
+runs:
+  using: 'node12'
+  main: '../dist/release-tag.js'
