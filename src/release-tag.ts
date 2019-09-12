@@ -13,7 +13,7 @@ const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${GITREF}`
 const COMMAND_GIT_CONFIG_USER = (name: string): string => `git config user.name "${name}"`
 const COMMAND_GIT_CONFIG_EMAIL = (email: string): string => `git config user.email "${email}"`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
-const COMMAND_GIT_PUSH = (token: string, version: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin ${version}`
+const COMMAND_GIT_PUSH = (token: string, version: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin v${version}`
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
