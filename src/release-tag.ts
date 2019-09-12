@@ -13,7 +13,7 @@ const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${GITREF}`
 const COMMAND_GIT_CONFIG_USER = (name: string): string => `git config user.name "${name}"`
 const COMMAND_GIT_CONFIG_EMAIL = (email: string): string => `git config user.email "${email}"`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
-const COMMAND_GIT_PUSH = (token: string, version: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin v${version}`
+// const COMMAND_GIT_PUSH = (token: string, version: string): string => `git -c http.extraheader="AUTHORIZATION: basic ${token}" push origin v${version}`
 const COMMAND_NPM_PUBLISH: string = 'npm publish'
 
 export default async function main() {
@@ -47,7 +47,8 @@ export default async function main() {
 
     const gh = new GitHub({ auth: `token ${token}` })
     await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
-    await exec(COMMAND_GIT_PUSH(token, version))
+    // await exec(COMMAND_GIT_PUSH(token, version))
+    await createTag(gh, version)
     await release(gh, version, core.getInput('name'), core.getInput('body'))
   } catch (error) {
     core.error(error)
@@ -71,6 +72,17 @@ export async function release(gh: GitHub, version: string, name?: string, body?:
     tag_name: version,
     name: name || `Release version v${version}`,
     body
+  })
+}
+
+
+export async function createTag(gh: GitHub, version: string): Promise<void> {
+  const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
+  await gh.git.createRef({
+    owner,
+    repo,
+    ref: 'refs/tags/v' + version,
+    sha: process.env.GITHUB_SHA as string
   })
 }
 
