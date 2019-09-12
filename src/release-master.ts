@@ -8,7 +8,7 @@ import * as fs from 'fs'
 
 const DEFAULT_CONTEXT: string = '.'
 const DEFAULT_TAG: string = 'master'
-const DEFAULT_GH_PACKAGE: boolean = true
+const DEFAULT_GH_PACKAGE: boolean = false
 
 const OWNER: string = process.env.GITHUB_ACTOR as string
 const REGISTRY: string = `https://npm.pkg.github.com/${OWNER}`

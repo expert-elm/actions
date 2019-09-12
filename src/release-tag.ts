@@ -7,8 +7,9 @@ import getExecResult from './exec-result'
 import { matchVersion } from './pkg-version'
 
 const DEFAULT_CONTEXT: string = '.'
-const COMMAND_GIT_USER = `git show -s --format='%an' ${process.env.GITHUB_REF}`
-const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${process.env.GITHUB_REF}`
+const GITREF = process.env.GITHUB_REF!.replace('heads', 'remotes/origin')
+const COMMAND_GIT_USER = `git show -s --format='%an' ${GITREF}`
+const COMMAND_GIT_EMAIL = `git show -s --format='%ae' ${GITREF}`
 const COMMAND_GIT_CONFIG_USER = (name: string): string => `git config user.name "${name}"`
 const COMMAND_GIT_CONFIG_EMAIL = (email: string): string => `git config user.email "${email}"`
 const COMMAND_NPM_VERSION = (version: string): string => `npm version ${version} -m "Release version v${version}"`
@@ -55,7 +56,7 @@ export default async function main() {
 }
 
 function getVersion(): string {
-  const ref = process.env.GITHUB_REF
+  const ref = GITREF
   if(undefined === ref) throw new Error(`Not ref found in process.env`)
   const ver = ref.split('/').pop()
   if(undefined === ver) throw new Error(`Not match version`)
