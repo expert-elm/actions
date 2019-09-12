@@ -48,7 +48,11 @@ export default async function main() {
     await createRef(gh, version)
     await createRelease(gh, version, core.getInput('title'), core.getInput('body'))
 
-    await createPullRequest(gh, version)
+    try {
+      await createPullRequest(gh, version)
+    } catch(e) {
+      core.error(e)
+    }
 
     const isPublishPackages = core.getInput('packages') || DEFAULT_PACKAGES
     if(isPublishPackages) {
@@ -152,18 +156,18 @@ function overridePackageConfig(context: string) {
   const pkgPath = path.join(context, 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
   pkg.name = `@${OWNER.toLowerCase()}/${pkg.name}`
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg), 'utf-8')
+  const content = JSON.stringify(pkg)
+  console.log(content)
+  fs.writeFileSync(pkgPath, content, 'utf-8')
 }
 
 function createNPMConfig(context: string) {
-  fs.writeFileSync(
-    path.join(context, '.npmrc'),
-    `\
+  const content = `\
 //npm.pkg.github.com/:_authToken=${TOKEN}
 registry=https://npm.pkg.github.com
-`,
-    'utf-8'
-  )
+`
+  console.log(content)
+  fs.writeFileSync(path.join(context, '.npmrc'), content, 'utf-8')
 }
 
 main()
