@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "common-actions",
+  "name": "@rabbitcc/actions",
   "version": "0.0.0",
   "description": "Common GitHub actions",
   "scripts": {

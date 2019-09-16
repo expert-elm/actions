@@ -5,12 +5,16 @@ inputs:
   context:
     description: 'Bundle context, default to current directory'
     default: '.'
-  token:
-    description: 'GitHub token'
-  name:
-    description: 'Release name'
+  title:
+    description: 'Release title'
   body:
     description: 'Release body'
+  packages:
+    description: 'Also publish to GitHub Packages Registry'
+    default: true
+  delete-branch:
+    description: 'Delete branch when publish successful'
+    default: true
 runs:
   using: 'node12'
   main: '../dist/release-tag.js'
