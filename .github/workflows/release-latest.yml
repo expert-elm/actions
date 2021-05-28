@@ -1,9 +1,11 @@
 name: Package master on push
 
 on: 
-  push:
-    branchs:
+  pull_request_review:
+    branches:
       - master
+    types:
+      - submitted
 
 jobs:
   build:
