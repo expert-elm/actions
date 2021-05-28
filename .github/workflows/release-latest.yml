@@ -15,10 +15,8 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         registry-url: 'https://registry.npmjs.org'
-    - name: Install Dependency
-      run: npm install
-    - name: Build
-      run: npm run build
+    - name: build
+      run: yarn && yarn build
     - name: Make
       run: |
         REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/$GITHUB_ACTOR/actions.git
