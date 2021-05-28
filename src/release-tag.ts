@@ -43,7 +43,7 @@ export default async function main() {
     
     if(!isCurrentContext) copyFileToContext(context)
 
-    const gh = new GitHub({ auth: `token ${TOKEN}` })
+    const gh = new GitHub.Octokit({ auth: `token ${TOKEN}` })
     await exec(COMMAND_NPM_PUBLISH, undefined, { cwd: context })
     await createRef(gh, version)
     await createRelease(gh, version, core.getInput('title'), core.getInput('body'))
@@ -99,7 +99,7 @@ function assertVersion(ref: string): void {
   if(!/release/i.test(ref)) throw new Error(`Not release branch`)
 }
 
-export async function createRelease(gh: GitHub, version: string, name?: string, body?: string): Promise<void> {
+export async function createRelease(gh: GitHub.Octokit, version: string, name?: string, body?: string): Promise<void> {
   const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
   await gh.repos.createRelease({
     owner,
@@ -110,7 +110,7 @@ export async function createRelease(gh: GitHub, version: string, name?: string, 
   })
 }
 
-export async function createPullRequest(gh: GitHub, version: string): Promise<void> {
+export async function createPullRequest(gh: GitHub.Octokit, version: string): Promise<void> {
   const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
   const { data: { number: pull_number } } = await gh.pulls.create({
     owner,
@@ -128,7 +128,7 @@ export async function createPullRequest(gh: GitHub, version: string): Promise<vo
   })
 }
 
-export async function deleteBranch(gh: GitHub): Promise<void> {
+export async function deleteBranch(gh: GitHub.Octokit): Promise<void> {
   const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
   await gh.git.deleteRef({
     owner,
@@ -137,7 +137,7 @@ export async function deleteBranch(gh: GitHub): Promise<void> {
   })
 }
 
-export async function createRef(gh: GitHub, version: string): Promise<void> {
+export async function createRef(gh: GitHub.Octokit, version: string): Promise<void> {
   const [ owner, repo ] = process.env.GITHUB_REPOSITORY!.split('/')
   await gh.git.createRef({
     owner,
