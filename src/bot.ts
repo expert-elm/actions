@@ -154,7 +154,8 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     const data = res.data
     if(Array.isArray(data)) return null
     if(data.type !== 'file') return null
-    return JSON.parse((data as any).content)
+    const content = (data as any).content
+    return JSON.parse(Buffer.from(content, 'base64').toString('utf-8'))
   }
 
   function get_next_version(curr: semver.SemVer) {
