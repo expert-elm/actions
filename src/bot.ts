@@ -115,18 +115,20 @@ interface ReleaseOptions {}
  */
 async function release(this: Context, version: semver.ReleaseType | string = 'patch', _options: ReleaseOptions = {}) {
   const { report, gh, owner, repo } = this
-  const exists = fs.existsSync('package.json')
-  if(!exists) {
-    await report('package.json not found')
-    return
-  }
+  // const exists = fs.existsSync('package.json')
+  // if(!exists) {
+  //   await report('package.json not found')
+  //   return
+  // }
 
-  const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-  const curr = semver.parse(pkg.version)
-  if(!curr) {
+  // const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+  // const curr = semver.parse(pkg.version)
+  const pkg = await get_pkg()
+  if(!pkg) {
     await report('package version parsed failed')
     return
   }
+  const curr = pkg.version
   const next = get_next_version(curr)
   if(!next) {
     await report('next version parsed failed')
@@ -136,11 +138,24 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   const ref = await create_branch(version)
   const branch = get_branch_name(ref.ref)
   const pr = await create_pr(version, branch)
-  await update_version(version, branch)
+  await update_version(pkg, version, branch)
   await merge_pr(pr)
   await delete_branch(ref.ref)
   await create_release(version)
   
+
+  async function get_pkg() {
+    const res = await gh.repos.getContent({
+      owner,
+      repo,
+      path: 'package.json'
+    })
+
+    const data = res.data
+    if(Array.isArray(data)) return null
+    if(data.type !== 'file') return null
+    return JSON.parse((data as any).content)
+  }
 
   function get_next_version(curr: semver.SemVer) {
     switch(version) {
@@ -196,9 +211,8 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
   }
 
-  async function update_version(version: string, branch: string) {
-    pkg.version = version
-    const content = JSON.stringify(pkg, undefined, 2)
+  async function update_version(pkg: any, version: string, branch: string) {
+    const content = JSON.stringify({ ...pkg, version }, undefined, 2)
     const content_path = 'package.json'
     const message = `release:${version}`
 
