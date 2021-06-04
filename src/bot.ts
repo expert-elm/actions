@@ -11,11 +11,13 @@
 
 
  export default async function main() {
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`)
+   try {
+    const payload = JSON.stringify(github.context.payload, undefined, 2)
+    console.log(`The event payload: ${payload}`)
+   } catch(error) {
+    core.error(error)
+    core.setFailed(error.message)
+   }
  }
 
- main().catch(error => {
-  core.error(error)
-  core.setFailed(error.message)
-})
+main()
