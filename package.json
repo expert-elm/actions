@@ -26,9 +26,11 @@
     "@actions/io": "^1.1.0",
     "@octokit/rest": "^18.5.4",
     "semver": "^7.3.5",
-    "tslib": "^2.2.0"
+    "tslib": "^2.2.0",
+    "yargs-parser": "^20.2.7"
   },
   "devDependencies": {
+    "@octokit/webhooks-definitions": "^3.67.3",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.6.1",
     "jest": "^27.0.1",

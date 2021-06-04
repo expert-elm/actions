@@ -9,3 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: HairyRabbit/actions/bot@latest
+        with:
+          users: HairyRabbit,

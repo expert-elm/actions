@@ -833,6 +833,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@octokit/webhooks-definitions@npm:^3.67.3":
+  version: 3.68.1
+  resolution: "@octokit/webhooks-definitions@npm:3.68.1"
+  checksum: 6474a4977d1afe2ffde013106b0b526f88b7b9f7a9108dd99d92f15bd36387b771b1c110dae7d22a3677d22928e7de9aa46bb85c45d866187f4378bdf1e33826
+  languageName: node
+  linkType: hard
+
 "@rabbitcc/actions@workspace:.":
   version: 0.0.0-use.local
   resolution: "@rabbitcc/actions@workspace:."
@@ -842,6 +849,7 @@ __metadata:
     "@actions/github": ^5.0.0
     "@actions/io": ^1.1.0
     "@octokit/rest": ^18.5.4
+    "@octokit/webhooks-definitions": ^3.67.3
     "@types/jest": ^26.0.23
     "@types/node": ^15.6.1
     jest: ^27.0.1
@@ -849,6 +857,7 @@ __metadata:
     ts-jest: ^27.0.1
     tslib: ^2.2.0
     typescript: 4.1
+    yargs-parser: ^20.2.7
   languageName: unknown
   linkType: soft
 
@@ -4281,7 +4290,7 @@ typescript@4.1:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:20.x, yargs-parser@npm:^20.2.2":
+"yargs-parser@npm:20.x, yargs-parser@npm:^20.2.2, yargs-parser@npm:^20.2.7":
   version: 20.2.7
   resolution: "yargs-parser@npm:20.2.7"
   checksum: 124e7f1c24c9609d5d1c343f14b83289634e19bb43770708ebb6a19852647aaa0f89edcbf0e5b18a21bee77f54513ab5051518b2950cda69eb607a7c6251aa4f

@@ -2,6 +2,12 @@ name: 'Bot'
 description: 'Bot'
 author: 'Rabbit <yfhj1990@hotmail.com>'
 inputs:
+  matcher:
+    description: 'Command matcher'
+    default: '/'
+  users:
+    description: 'User whitelist, split by ","'
+    default: ''
   report:
     description: 'Report results'
     default: true
