@@ -34,11 +34,11 @@ export default async function main() {
   core.info(`raw: ${content}`)
   if(!check_content(content, options.matcher)) return
 
-  const gh = github.getOctokit(GITHUB_TOKEN, { auth: `token ${GITHUB_TOKEN}` }).rest
+  const gh = github.getOctokit(GITHUB_TOKEN).rest
   const report = create_report(gh, issue)
 
   const parsed = parse(content.replace(options.matcher, ''))
-  core.info(`parsed: ${parsed}`)
+  core.info(`parsed: ${JSON.stringify(parsed)}`)
 
   switch(parsed.command) {
     case 'echo': return await echo.apply({ report }, [ parsed.params[0], parsed.options ])

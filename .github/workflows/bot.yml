@@ -10,4 +10,6 @@ jobs:
     steps:
       - uses: HairyRabbit/actions/bot@latest
         with:
-          users: HairyRabbit,
+          users: HairyRabbit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
