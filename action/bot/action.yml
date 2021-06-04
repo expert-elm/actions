@@ -1,0 +1,10 @@
+name: 'Bot'
+description: 'Bot'
+author: 'Rabbit <yfhj1990@hotmail.com>'
+inputs:
+  report:
+    description: 'Report results'
+    default: true
+runs:
+  using: 'node14'
+  main: '../dist/bot.js'
