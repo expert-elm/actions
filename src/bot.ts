@@ -223,7 +223,8 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       path: content_path,
       message,
       content,
-      branch
+      branch,
+      sha: GITHUB_SHA
     })
   }
 
