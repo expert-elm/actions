@@ -113,7 +113,7 @@ interface ReleaseOptions {}
  * @param _options 
  * @returns 
  */
-async function release(this: Context, version: semver.ReleaseType | string, _options: ReleaseOptions) {
+async function release(this: Context, version: semver.ReleaseType | string = 'patch', _options: ReleaseOptions = {}) {
   const { report, gh, owner, repo } = this
   const exists = fs.existsSync('package.json')
   if(!exists) {
