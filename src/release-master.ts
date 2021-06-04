@@ -1,9 +1,9 @@
-import * as core from '@actions/core'
+import core from '@actions/core'
 import { exec } from '@actions/exec'
-import * as io from '@actions/io'
+import io from '@actions/io'
 import getExecResult from './exec-result'
 import getVersion from './pkg-version'
-import * as path from 'path'
+import path from 'path'
 
 const DEFAULT_CONTEXT: string = '.'
 const DEFAULT_TAG: string = 'master'

@@ -1,0 +1,8 @@
+name: Bot on issue comment
+
+on: 
+  pull_request_review:
+    branches:
+      - master
+    types:
+      - submitted
