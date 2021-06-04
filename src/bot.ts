@@ -23,7 +23,7 @@ export default async function main() {
     users: core.getInput('users').split(','),
     report: core.getInput('report'),
   }
-  core.info(`options: ${options}`)
+  core.info(`options: ${JSON.stringify(options)}`)
 
   const { action, comment, issue, sender } = github.context.payload as IssueCommentEvent
   if(action !== 'created') return
@@ -49,12 +49,12 @@ export default async function main() {
 function check_user(user: User, list: string[]) {
   const trimed_list = list.map(item => item.trim().toLowerCase()).filter(Boolean)
   const username = user.login.toLowerCase()
-  core.info(`check user:${user} in list:${trimed_list}`)
+  core.info(`check user:${username} in list:${trimed_list}`)
   return trimed_list.includes(username)
 }
 
 function check_content(content: string, matcher: string) {
-  return !content.startsWith(matcher)
+  return content.startsWith(matcher)
 }
 
 function parse(content: string) {
