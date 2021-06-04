@@ -23,7 +23,7 @@ export default async function main() {
     users: core.getInput('users').split(','),
     report: core.getInput('report'),
   }
-  core.debug(`options: ${options}`)
+  core.info(`options: ${options}`)
 
   const { action, comment, issue, sender } = github.context.payload as IssueCommentEvent
   if(action !== 'created') return
@@ -31,13 +31,14 @@ export default async function main() {
 
   const { body, } = comment  
   const content = body.trim()
+  core.info(`raw: ${content}`)
   if(!check_content(content, options.matcher)) return
 
   const gh = github.getOctokit(GITHUB_TOKEN, { auth: `token ${GITHUB_TOKEN}` }).rest
   const report = create_report(gh, issue)
 
-  const parsed = parse(content)
-  core.debug(`parsed: ${parsed}`)
+  const parsed = parse(content.replace(options.matcher, ''))
+  core.info(`parsed: ${parsed}`)
 
   switch(parsed.command) {
     case 'echo': return await echo.apply({ report }, [ parsed.params[0], parsed.options ])
@@ -48,13 +49,12 @@ export default async function main() {
 function check_user(user: User, list: string[]) {
   const trimed_list = list.map(item => item.trim().toLowerCase()).filter(Boolean)
   const username = user.login.toLowerCase()
-  if(trimed_list.includes(username)) return true
-  return false
+  core.info(`check user:${user} in list:${trimed_list}`)
+  return trimed_list.includes(username)
 }
 
 function check_content(content: string, matcher: string) {
-  if(!content.startsWith(matcher)) return false
-  return true
+  return !content.startsWith(matcher)
 }
 
 function parse(content: string) {
