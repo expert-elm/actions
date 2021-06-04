@@ -155,7 +155,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       }
       default: {
         // check: next should gt then curr, use `semver.gt`
-        return semver.parse(version)?.format()
+        return semver.parse(version)!.format()
       }
     }
   }
