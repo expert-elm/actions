@@ -123,7 +123,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
 
   // const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
   // const curr = semver.parse(pkg.version)
-  const pkg = await get_pkg()
+  const [ pkg, pkg_sha ] = await get_pkg()
   if(!pkg) {
     await report('package version parsed failed')
     return
@@ -137,7 +137,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
 
   const ref = await create_branch(next)
   const branch = get_branch_name(ref.ref)
-  await update_version(pkg, next, branch)
+  await update_version(pkg, next, branch, pkg_sha)
   const pr = await create_pr(next, branch)
   await merge_pr(pr)
   await delete_branch(ref.ref)
@@ -152,10 +152,10 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
 
     const data = res.data
-    if(Array.isArray(data)) return null
-    if(data.type !== 'file') return null
+    if(Array.isArray(data)) return [ null, '' ]
+    if(data.type !== 'file') return [ null, '' ]
     const content = (data as any).content
-    return JSON.parse(Buffer.from(content, 'base64').toString('utf-8'))
+    return [ JSON.parse(Buffer.from(content, 'base64').toString('utf-8')), data.sha ]
   }
 
   function get_next_version(curr: semver.SemVer) {
@@ -212,7 +212,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
   }
 
-  async function update_version(pkg: any, version: string, branch: string) {
+  async function update_version(pkg: any, version: string, branch: string, sha: string) {
     const content = Buffer.from(JSON.stringify({ ...pkg, version }, undefined, 2)).toString('base64')
     const content_path = 'package.json'
     const message = `release:${version}`
@@ -224,7 +224,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       message,
       content,
       branch,
-      sha: GITHUB_SHA
+      sha,
     })
   }
 
