@@ -6,7 +6,7 @@
  // import fs from 'fs'
  import * as core from '@actions/core'
  // import { exec } from '@actions/exec'
- import github from '@actions/github'
+ import * as github from '@actions/github'
  // import io from '@actions/io'
 
 
