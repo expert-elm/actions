@@ -6,5 +6,5 @@ inputs:
     description: 'Report results'
     default: true
 runs:
-  using: 'node14'
+  using: 'node12'
   main: '../dist/bot.js'
