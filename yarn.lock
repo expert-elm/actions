@@ -852,6 +852,7 @@ __metadata:
     "@octokit/webhooks-definitions": ^3.67.3
     "@types/jest": ^26.0.23
     "@types/node": ^15.6.1
+    "@types/semver": ^7.3.6
     jest: ^27.0.1
     semver: ^7.3.5
     ts-jest: ^27.0.1
@@ -982,6 +983,13 @@ __metadata:
   version: 2.2.3
   resolution: "@types/prettier@npm:2.2.3"
   checksum: b7e80288f9f776caca84391a7a217b8baac6b4fce00bb9701af69299d465cb8faf17466f0af0803970c74d2c191767ca729a6d21a2f7e2ce552d1ef6cc0d653a
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:^7.3.6":
+  version: 7.3.6
+  resolution: "@types/semver@npm:7.3.6"
+  checksum: 36776caed9a5d80cc7e0dd32fc08ac762918273bef849c369a300895646f9126e9857c9235e130493cf1fb2ee77e44cd1b599eded4fcbd11803962936771506a
   languageName: node
   linkType: hard
 
