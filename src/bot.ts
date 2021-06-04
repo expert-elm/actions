@@ -213,7 +213,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   }
 
   async function update_version(pkg: any, version: string, branch: string) {
-    const content = JSON.stringify({ ...pkg, version }, undefined, 2)
+    const content = Buffer.from(JSON.stringify({ ...pkg, version }, undefined, 2)).toString('base64')
     const content_path = 'package.json'
     const message = `release:${version}`
 
