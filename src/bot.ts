@@ -135,13 +135,13 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     return
   }
 
-  const ref = await create_branch(version)
+  const ref = await create_branch(next)
   const branch = get_branch_name(ref.ref)
-  const pr = await create_pr(version, branch)
-  await update_version(pkg, version, branch)
+  const pr = await create_pr(next, branch)
+  await update_version(pkg, next, branch)
   await merge_pr(pr)
   await delete_branch(ref.ref)
-  await create_release(version)
+  await create_release(next)
   
 
   async function get_pkg() {
@@ -180,14 +180,14 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     const res = await gh.git.createRef({
       owner,
       repo,
-      ref: `refs/tags/release_${version}`,
+      ref: `refs/heads/release_${version}`,
       sha: GITHUB_SHA
     })
     return res.data
   }
 
   function get_branch_name(ref: string) {
-    return ref.replace(/refs\/tags\//, '')
+    return ref.replace(/refs\/heads\//, '')
   }
 
   async function create_pr(version: string, branch: string) {
