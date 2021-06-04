@@ -213,7 +213,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   }
 
   async function update_version(pkg: any, version: string, branch: string, sha: string) {
-    const content = Buffer.from(JSON.stringify({ ...pkg, version }, undefined, 2)).toString('base64')
+    const content = Buffer.from(JSON.stringify({ ...pkg, version }, undefined, 2) + '\n').toString('base64')
     const content_path = 'package.json'
     const message = `release:${version}`
 
@@ -232,7 +232,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     await gh.git.deleteRef({
       owner,
       repo,
-      ref,
+      ref: ref.replace(/refs\//, ''),
     })
   }
 
