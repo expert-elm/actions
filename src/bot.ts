@@ -2,12 +2,12 @@
  * bot
  */
 
- import path from 'path'
- import fs from 'fs'
+ // import path from 'path'
+ // import fs from 'fs'
  import core from '@actions/core'
- import { exec } from '@actions/exec'
+ // import { exec } from '@actions/exec'
  import github from '@actions/github'
- import io from '@actions/io'
+ // import io from '@actions/io'
 
 
  export default async function main() {

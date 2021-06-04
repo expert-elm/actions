@@ -1,8 +1,12 @@
 name: Bot on issue comment
 
 on: 
-  pull_request_review:
-    branches:
-      - master
+  issue_comment:
     types:
-      - submitted
+      - created
+jobs:
+  commented:
+    test:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: HairyRabbit/actions/bot@latest
