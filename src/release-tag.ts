@@ -54,6 +54,7 @@ export default async function main() {
   await createRef(gh, version)
   await createRelease(gh, version, core.getInput('title'), core.getInput('body'))
 
+
   try {
     await createPullRequest(gh, version)
   } catch (e) {
