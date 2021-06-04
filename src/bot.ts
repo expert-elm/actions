@@ -18,6 +18,9 @@ const GITHUB_REPOSITORY = process.env['GITHUB_REPOSITORY']!
 type GitHubAPI = ReturnType<typeof github.getOctokit>['rest']
 
 export default async function main() {
+  core.info(`owner: ${GITHUB_OWNER}`)
+  core.info(`repo: ${GITHUB_REPOSITORY}`)
+
   const options = {
     matcher: core.getInput('matcher'),
     users: core.getInput('users').split(','),
@@ -64,10 +67,11 @@ function parse(content: string) {
 }
 
 function create_report(gh: GitHubAPI, issue: IssueCommentEvent['issue']) {  
+  const [owner, repo] = GITHUB_REPOSITORY!.split('/')
   return async (content: string) => {
     await gh.issues.createComment({
-      owner: GITHUB_OWNER,
-      repo: GITHUB_REPOSITORY,
+      owner,
+      repo,
       issue_number: issue.number,
       body: content
     })
