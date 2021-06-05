@@ -1,6 +1,6 @@
 {
   "name": "@rabbitcc/actions",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Common GitHub actions",
   "scripts": {
     "start": "tsc -w",
