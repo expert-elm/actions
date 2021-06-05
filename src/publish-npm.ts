@@ -35,8 +35,8 @@ function override_package_name() {
   const pkg_path = 'package.json'
   const pkg = JSON.parse(fs.readFileSync(pkg_path, 'utf-8'))
   if(pkg.name.startsWith('@')) {
-    const [ _scope, name ] = pkg.name.split('/')
-    pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${name}`
+    const splited = pkg.name.split('/')
+    pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${splited[1]}`
   }
   else {
     pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${pkg.name}`
