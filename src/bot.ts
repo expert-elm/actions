@@ -142,6 +142,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   await merge_pr(pr)
   await delete_branch(ref.ref)
   await create_release(next)
+  await publish_to_npm_registry()
   
 
   async function get_pkg() {
@@ -241,9 +242,13 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       owner,
       repo,
       tag_name: 'v' + version,
-      name: `Release v${version}`,
+      name: `v${version}`,
       body: '',
     })
+  }
+
+  function publish_to_npm_registry() {
+    
   }
 }
 //#endregion
