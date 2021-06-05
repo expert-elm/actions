@@ -142,7 +142,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   await merge_pr(pr)
   await delete_branch(ref.ref)
   await create_release(next)
-  await publish_to_npm_registry()
+  await trigger_workflow(next)
   
 
   async function get_pkg() {
@@ -247,8 +247,13 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
   }
 
-  function publish_to_npm_registry() {
-    
+  async function trigger_workflow(version: string) {
+    await gh.actions.createWorkflowDispatch({
+      owner,
+      repo,
+      ref: 'v' + version,
+      workflow_id: 'publish-npm.yml'
+    })  
   }
 }
 //#endregion
