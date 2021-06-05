@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@rabbitcc/actions",
   "version": "0.0.2",
   "description": "Common GitHub actions",
