@@ -246,7 +246,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   }
 
   async function build() {
-    return await exec(`npm install && npm run build`)
+    return await exec(`npm run build`)
   }
   async function publish_to_npm () {
     return await exec(`npm publish`)
