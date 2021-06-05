@@ -249,6 +249,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     return await exec(`npm run build`)
   }
   async function publish_to_npm () {
+    await exec(`npm whoami`)
     return await exec(`npm publish`)
   }
 
