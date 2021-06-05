@@ -197,7 +197,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       repo,
       head: branch,
       base: 'master',
-      title: `[Release] Version ${version}`,
+      title: `[Release] v${version}`,
       body: '',
       maintainer_can_modify: true
     })

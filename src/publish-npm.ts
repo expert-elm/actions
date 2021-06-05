@@ -25,10 +25,26 @@ export default async function main() {
   exec(`npm publish`)
 
   if(options.github_package) {
+    override_package_name()
     create_npm_config()
     exec(`npm publish`)
   }
 }
+
+function override_package_name() {
+  const pkg_path = 'package.json'
+  const pkg = JSON.parse(fs.readFileSync(pkg_path, 'utf-8'))
+  if(pkg.name.startsWith('@')) {
+    const [ _scope, name ] = pkg.name.split('/')
+    pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${name}`
+  }
+  else {
+    pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${pkg.name}`
+  }
+  const content = JSON.stringify(pkg, undefined, 2) + '\n'
+  fs.writeFileSync(pkg_path, content, 'utf-8')
+}
+
 
 function create_npm_config() {
   const content = `\
