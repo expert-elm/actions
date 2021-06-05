@@ -3,7 +3,7 @@ name: publish-npm
 on: 
   release:
     types:
-      - published
+      - released
 
 jobs:
   publish:
