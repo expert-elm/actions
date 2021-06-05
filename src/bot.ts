@@ -135,10 +135,10 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   await merge_pr(pr)
   await delete_branch(ref.ref)
   await create_release(next)
+
+  await build()
   await publish_to_npm()
   await publish_to_github()
-  
-  
 
   async function get_pkg() {
     const res = await gh.repos.getContent({
@@ -245,6 +245,9 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
   }
 
+  async function build() {
+    return await exec(`npm install && npm run build`)
+  }
   async function publish_to_npm () {
     return await exec(`npm publish`)
   }
@@ -277,11 +280,6 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   `
     fs.writeFileSync('.npmrc', content, 'utf-8')
   }
-  
-  main().catch(error => {
-    core.error(error)
-    core.setFailed(error.message)
-  })
 }
 //#endregion
 
