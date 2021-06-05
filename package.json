@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@rabbitcc/actions",
   "version": "0.0.1",
   "description": "Common GitHub actions",
@@ -12,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/HairyRabbit/actions.git"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "MIT",
