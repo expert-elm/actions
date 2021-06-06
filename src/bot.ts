@@ -16,6 +16,7 @@ const GITHUB_TOKEN = process.env['GITHUB_TOKEN']!
 const GITHUB_OWNER = process.env['GITHUB_ACTOR']!
 const GITHUB_REPOSITORY = process.env['GITHUB_REPOSITORY']!
 const GITHUB_SHA = process.env['GITHUB_SHA']!
+const NODE_AUTH_TOKEN = process.env['NODE_AUTH_TOKEN']!
 
 type GitHubAPI = ReturnType<typeof github.getOctokit>['rest']
 
@@ -249,12 +250,19 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     return await exec(`npm run build`)
   }
   async function publish_to_npm () {
+    create_npm_config()
+    // await exec(`npm config set _auth ${NODE_AUTH_TOKEN}`)
+    // await exec(`npm config set registry https://registry.npmjs.org/`)
+    // await exec(`npm config set always-auth true`)
     return await exec(`npm publish`)
   }
 
   async function publish_to_github() {
     override_package_name()
-    create_npm_config()
+    create_github_config()
+    // await exec(`npm config set _auth ${GITHUB_TOKEN}`)
+    // await exec(`npm config set registry https://npm.pkg.github.com/`)
+    // await exec(`npm config set always-auth true`)
     await exec(`npm publish`)
   }
 
@@ -272,8 +280,15 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     fs.writeFileSync(pkg_path, content, 'utf-8')
   }
   
-  
   function create_npm_config() {
+    const content = `\
+  //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+  registry=https://registry.npmjs.org
+  `
+    fs.writeFileSync('.npmrc', content, 'utf-8')
+  }
+  
+  function create_github_config() {
     const content = `\
   //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
   registry=https://npm.pkg.github.com
