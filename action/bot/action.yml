@@ -8,6 +8,9 @@ inputs:
   users:
     description: 'User whitelist, split by ","'
     default: ''
+  yarn:
+    description: 'Use yarn'
+    default: false
   report:
     description: 'Report results'
     default: true

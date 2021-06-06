@@ -3,9 +3,9 @@
  */
 
 // import path from 'path'
-// import * as fs from 'fs'
+import * as fs from 'fs'
 import * as core from '@actions/core'
-// import { exec } from '@actions/exec'
+import { exec } from '@actions/exec'
 import * as github from '@actions/github'
 import { IssueCommentEvent, PullRequest, User } from '@octokit/webhooks-definitions/schema'
 import * as yargs from 'yargs-parser'
@@ -16,6 +16,7 @@ const GITHUB_TOKEN = process.env['GITHUB_TOKEN']!
 const GITHUB_OWNER = process.env['GITHUB_ACTOR']!
 const GITHUB_REPOSITORY = process.env['GITHUB_REPOSITORY']!
 const GITHUB_SHA = process.env['GITHUB_SHA']!
+const NODE_AUTH_TOKEN = process.env['NODE_AUTH_TOKEN']!
 
 type GitHubAPI = ReturnType<typeof github.getOctokit>['rest']
 
@@ -115,14 +116,7 @@ interface ReleaseOptions {}
  */
 async function release(this: Context, version: semver.ReleaseType | string = 'patch', _options: ReleaseOptions = {}) {
   const { report, gh, owner, repo } = this
-  // const exists = fs.existsSync('package.json')
-  // if(!exists) {
-  //   await report('package.json not found')
-  //   return
-  // }
-
-  // const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
-  // const curr = semver.parse(pkg.version)
+  
   const [ pkg, pkg_sha ] = await get_pkg()
   if(!pkg) {
     await report('package version parsed failed')
@@ -142,7 +136,10 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   await merge_pr(pr)
   await delete_branch(ref.ref)
   await create_release(next)
-  
+
+  await build()
+  await publish_to_npm()
+  await publish_to_github()
 
   async function get_pkg() {
     const res = await gh.repos.getContent({
@@ -196,7 +193,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       repo,
       head: branch,
       base: 'master',
-      title: `[Release] Version ${version}`,
+      title: `[Release] v${version}`,
       body: '',
       maintainer_can_modify: true
     })
@@ -213,7 +210,8 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   }
 
   async function update_version(pkg: any, version: string, branch: string, sha: string) {
-    const content = Buffer.from(JSON.stringify({ ...pkg, version }, undefined, 2) + '\n').toString('base64')
+    const pkg_content = JSON.stringify({ ...pkg, version }, undefined, 2) + '\n'
+    const content = Buffer.from(pkg_content).toString('base64')
     const content_path = 'package.json'
     const message = `release:${version}`
 
@@ -226,6 +224,8 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       branch,
       sha,
     })
+
+    fs.writeFileSync('package.json', pkg_content, 'utf-8')
   }
 
   async function delete_branch(ref: string) {
@@ -241,9 +241,59 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       owner,
       repo,
       tag_name: 'v' + version,
-      name: `Release v${version}`,
+      name: `v${version}`,
       body: '',
     })
+  }
+
+  async function build() {
+    return await exec(`npm run build`)
+  }
+  async function publish_to_npm () {
+    create_npm_config()
+    // await exec(`npm config set _auth ${NODE_AUTH_TOKEN}`)
+    // await exec(`npm config set registry https://registry.npmjs.org/`)
+    // await exec(`npm config set always-auth true`)
+    return await exec(`npm publish`)
+  }
+
+  async function publish_to_github() {
+    override_package_name()
+    create_github_config()
+    // await exec(`npm config set _auth ${GITHUB_TOKEN}`)
+    // await exec(`npm config set registry https://npm.pkg.github.com/`)
+    // await exec(`npm config set always-auth true`)
+    await exec(`npm publish`)
+  }
+
+  function override_package_name() {
+    const pkg_path = 'package.json'
+    const pkg = JSON.parse(fs.readFileSync(pkg_path, 'utf-8'))
+    if(pkg.name.startsWith('@')) {
+      const splited = pkg.name.split('/')
+      pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${splited[1]}`
+    }
+    else {
+      pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${pkg.name}`
+    }
+    const content = JSON.stringify(pkg, undefined, 2) + '\n'
+    fs.writeFileSync(pkg_path, content, 'utf-8')
+  }
+  
+  function create_npm_config() {
+    const content = `\
+  //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}
+  registry=https://registry.npmjs.org
+  `
+    fs.writeFileSync('.npmrc', content, 'utf-8')
+  }
+  
+  function create_github_config() {
+    const content = `\
+  //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+  registry=https://npm.pkg.github.com
+  `
+    fs.writeFileSync('.npmrc', content, 'utf-8')
   }
 }
 //#endregion

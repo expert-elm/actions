@@ -1,7 +1,6 @@
 {
-  "private": true,
   "name": "@rabbitcc/actions",
-  "version": "0.0.1",
+  "version": "0.0.17",
   "description": "Common GitHub actions",
   "scripts": {
     "start": "tsc -w",
@@ -12,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/HairyRabbit/actions.git"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "",
   "license": "MIT",
@@ -41,5 +43,8 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
