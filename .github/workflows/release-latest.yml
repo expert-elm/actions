@@ -1,11 +1,6 @@
-name: Package master on push
+name: release-latest
 
-on: 
-  pull_request_review:
-    branches:
-      - master
-    types:
-      - submitted
+on: [push, workflow-dispatch]
 
 jobs:
   build:
@@ -21,7 +16,7 @@ jobs:
       run: yarn && yarn build
     - name: Make
       run: |
-        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/$GITHUB_ACTOR/actions.git
+        REMOTE=https://HairyRabbit:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
 
         rm release -rf
         mkdir release
@@ -42,7 +37,7 @@ jobs:
         git remote add origin $REMOTE
         git checkout -b latest
         git config user.email "yfhj1990@hotmail.com"
-        git config user.name "Rabbit CI"
+        git config user.name "CI"
         git add .
         git commit -m "Release latest"
         git push origin latest -f
