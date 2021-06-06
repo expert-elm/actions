@@ -251,18 +251,12 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   }
   async function publish_to_npm () {
     create_npm_config()
-    // await exec(`npm config set _auth ${NODE_AUTH_TOKEN}`)
-    // await exec(`npm config set registry https://registry.npmjs.org/`)
-    // await exec(`npm config set always-auth true`)
     return await exec(`npm publish`)
   }
 
   async function publish_to_github() {
     override_package_name()
     create_github_config()
-    // await exec(`npm config set _auth ${GITHUB_TOKEN}`)
-    // await exec(`npm config set registry https://npm.pkg.github.com/`)
-    // await exec(`npm config set always-auth true`)
     await exec(`npm publish`)
   }
 
@@ -271,10 +265,10 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     const pkg = JSON.parse(fs.readFileSync(pkg_path, 'utf-8'))
     if(pkg.name.startsWith('@')) {
       const splited = pkg.name.split('/')
-      pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${splited[1]}`
+      pkg.name = `@${owner.toLowerCase()}/${splited[1]}`
     }
     else {
-      pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${pkg.name}`
+      pkg.name = `@${owner.toLowerCase()}/${pkg.name}`
     }
     const content = JSON.stringify(pkg, undefined, 2) + '\n'
     fs.writeFileSync(pkg_path, content, 'utf-8')
