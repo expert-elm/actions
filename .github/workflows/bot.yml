@@ -1,4 +1,4 @@
-name: Bot on issue comment
+name: bot
 
 on: 
   issue_comment:
