@@ -29,7 +29,6 @@
     "@octokit/rest": "^18.5.4",
     "semver": "^7.3.5",
     "tslib": "^2.2.0",
-    "util-extra": "^0.0.26",
     "yargs-parser": "^20.2.7"
   },
   "devDependencies": {
