@@ -60,8 +60,8 @@ export default async function main() {
   
 
   switch(parsed.command) {
-    case 'echo': return await echo.apply(context, [ parsed.params[0], parsed.options as EchoOptions ])
-    case 'release': return await release.apply(context, [ parsed.params[0], parsed.options as ReleaseOptions ])
+    case 'echo': return await echo.apply(context, [ parsed.params[0], parsed.options as unknown as EchoOptions ])
+    case 'release': return await release.apply(context, [ parsed.params[0], parsed.options as unknown as ReleaseOptions ])
     default: fallback(parsed.command)
   }
 }
