@@ -126,7 +126,7 @@ interface ReleaseOptions {
  * @param _options 
  * @returns 
  */
-async function release(this: Context, version: semver.ReleaseType | string = 'patch', _options: ReleaseOptions = {}) {
+async function release(this: Context, version: semver.ReleaseType | string = 'patch', options: ReleaseOptions = {}) {
   const { report, gh, owner, repo } = this
   core.info(`release owner: ${owner}`)
   core.info(`release repo: ${repo}`)
@@ -265,13 +265,13 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
   }
   async function publish_to_npm () {
     create_npm_config()
-    return await exec(`npm publish`)
+    return await exec(`npm publish ${options['dry-run'] ? '--dry-run' : ''}`)
   }
 
   async function publish_to_github() {
     override_package_name()
     create_github_config()
-    await exec(`npm publish`)
+    await exec(`npm publish ${options['dry-run'] ? '--dry-run' : ''}`)
   }
 
   function override_package_name() {
