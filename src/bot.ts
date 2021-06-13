@@ -116,6 +116,8 @@ interface ReleaseOptions {}
  */
 async function release(this: Context, version: semver.ReleaseType | string = 'patch', _options: ReleaseOptions = {}) {
   const { report, gh, owner, repo } = this
+  core.info(`release owner: ${owner}`)
+  core.info(`release repo: ${repo}`)
   
   const [ pkg, pkg_sha ] = await get_pkg()
   if(!pkg) {
