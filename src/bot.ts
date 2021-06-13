@@ -11,6 +11,7 @@ import { IssueCommentEvent, PullRequest, User } from '@octokit/webhooks-definiti
 import * as yargs from 'yargs-parser'
 import * as semver from 'semver'
 import * as io from '@actions/io'
+import { is_boolean, is_false, is_string } from 'util-extra'
 
 const GITHUB_TOKEN = process.env['GITHUB_TOKEN']!
 const GITHUB_OWNER = process.env['GITHUB_ACTOR']!
@@ -118,6 +119,7 @@ async function echo(this: Context, content: string, _options: EchoOptions) {
 
 interface ReleaseOptions {
   'dry-run'?: string
+  build: string | boolean
 }
 /**
  * Release version
@@ -260,8 +262,23 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
   }
 
+  /**
+   * run build
+   */
   async function build() {
-    return await exec(`npm run build`)
+    if(is_boolean(options.build)) {
+      if(is_false(options.build)) {
+        return
+      }
+      if(pkg.script && pkg.script.build) {
+        return await exec(`npm run build`)
+      }
+      return
+    }
+    else if(is_string(options.build)) {
+      return await exec(options.build)
+    }
+    else return
   }
   async function publish_to_npm () {
     create_npm_config()

@@ -858,6 +858,7 @@ __metadata:
     ts-jest: ^27.0.1
     tslib: ^2.2.0
     typescript: 4.1
+    util-extra: ^0.0.26
     yargs-parser: ^20.2.7
   languageName: unknown
   linkType: soft
@@ -4014,6 +4015,13 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
+"tslib@npm:^1.10.0":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: f44fe7f216946b17d3e3074df3746372703cf24e9127b4c045511456e8e4bf25515fb0a1bb3937676cc305651c5d4fcb6377b0588a4c6a957e748c4c28905d17
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^2.2.0":
   version: 2.2.0
   resolution: "tslib@npm:2.2.0"
@@ -4116,6 +4124,15 @@ typescript@4.1:
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
   checksum: 73c2b1cf0210ccac300645384d8443cabbd93194117b2dc1b3bae8d8279ad39aedac857e020c4ea505e96a1045059c7359db3df6a9df0be6b8584166c9d61dc9
+  languageName: node
+  linkType: hard
+
+"util-extra@npm:^0.0.26":
+  version: 0.0.26
+  resolution: "util-extra@npm:0.0.26"
+  dependencies:
+    tslib: ^1.10.0
+  checksum: 5788ceedb3a06b9f8064633c581512df7d3bfe08b2cf8d595fd38bce08bde81ec1ca22df42043d0845451a944e866d1a83168df77ecc1bcf4ea9390e32d3739b
   languageName: node
   linkType: hard
 
