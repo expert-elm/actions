@@ -119,7 +119,7 @@ async function echo(this: Context, content: string, _options: EchoOptions) {
 
 interface ReleaseOptions {
   'dry-run'?: string
-  build: string | boolean
+  build?: string | boolean
 }
 /**
  * Release version
