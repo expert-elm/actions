@@ -56,11 +56,12 @@ export default async function main() {
     owner,
     repo,
   }
+  
 
   switch(parsed.command) {
-    case 'echo': return await echo.apply(context, [ parsed.params[0], parsed.options ])
-    case 'release': return await release.apply(context, [ parsed.params[0], parsed.options ])
-    default: return
+    case 'echo': return await echo.apply(context, [ parsed.params[0], parsed.options as unknown as EchoOptions ])
+    case 'release': return await release.apply(context, [ parsed.params[0], parsed.options as unknown as ReleaseOptions ])
+    default: fallback(parsed.command)
   }
 }
 
@@ -92,6 +93,15 @@ function create_report(gh: GitHubAPI, owner: string, repo: string, issue: IssueC
   }
 }
 
+function fallback(command?: string) {
+  if(command) {
+    core.info(`unknown command ${command}`)
+  }
+  else {
+    core.info(`no command`)
+  }
+}
+
 //#region commands
 interface Context {
   gh: GitHubAPI,
@@ -106,7 +116,10 @@ async function echo(this: Context, content: string, _options: EchoOptions) {
   await report(content)
 }
 
-interface ReleaseOptions {}
+interface ReleaseOptions {
+  'dry-run'?: string
+  build?: string | boolean
+}
 /**
  * Release version
  * 
@@ -114,8 +127,10 @@ interface ReleaseOptions {}
  * @param _options 
  * @returns 
  */
-async function release(this: Context, version: semver.ReleaseType | string = 'patch', _options: ReleaseOptions = {}) {
+async function release(this: Context, version: semver.ReleaseType | string = 'patch', options: ReleaseOptions = {}) {
   const { report, gh, owner, repo } = this
+  core.info(`release owner: ${owner}`)
+  core.info(`release repo: ${repo}`)
   
   const [ pkg, pkg_sha ] = await get_pkg()
   if(!pkg) {
@@ -246,24 +261,33 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     })
   }
 
+  /**
+   * run build
+   */
   async function build() {
-    return await exec(`npm run build`)
+    if('boolean' === typeof options.build) {
+      if(false === options.build) {
+        return
+      }
+      if(pkg.script && pkg.script.build) {
+        return await exec(`npm run build`)
+      }
+      return
+    }
+    else if('string' === typeof options.build) {
+      return await exec(options.build)
+    }
+    else return
   }
   async function publish_to_npm () {
     create_npm_config()
-    // await exec(`npm config set _auth ${NODE_AUTH_TOKEN}`)
-    // await exec(`npm config set registry https://registry.npmjs.org/`)
-    // await exec(`npm config set always-auth true`)
-    return await exec(`npm publish`)
+    return await exec(`npm publish ${options['dry-run'] ? '--dry-run' : ''}`)
   }
 
   async function publish_to_github() {
     override_package_name()
     create_github_config()
-    // await exec(`npm config set _auth ${GITHUB_TOKEN}`)
-    // await exec(`npm config set registry https://npm.pkg.github.com/`)
-    // await exec(`npm config set always-auth true`)
-    await exec(`npm publish`)
+    await exec(`npm publish ${options['dry-run'] ? '--dry-run' : ''}`)
   }
 
   function override_package_name() {
@@ -271,10 +295,10 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
     const pkg = JSON.parse(fs.readFileSync(pkg_path, 'utf-8'))
     if(pkg.name.startsWith('@')) {
       const splited = pkg.name.split('/')
-      pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${splited[1]}`
+      pkg.name = `@${owner.toLowerCase()}/${splited[1]}`
     }
     else {
-      pkg.name = `@${GITHUB_OWNER.toLowerCase()}/${pkg.name}`
+      pkg.name = `@${owner.toLowerCase()}/${pkg.name}`
     }
     const content = JSON.stringify(pkg, undefined, 2) + '\n'
     fs.writeFileSync(pkg_path, content, 'utf-8')
