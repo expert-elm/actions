@@ -56,11 +56,12 @@ export default async function main() {
     owner,
     repo,
   }
+  
 
   switch(parsed.command) {
-    case 'echo': return await echo.apply(context, [ parsed.params[0], parsed.options ])
-    case 'release': return await release.apply(context, [ parsed.params[0], parsed.options ])
-    default: return
+    case 'echo': return await echo.apply(context, [ parsed.params[0], parsed.options as EchoOptions ])
+    case 'release': return await release.apply(context, [ parsed.params[0], parsed.options as ReleaseOptions ])
+    default: fallback(parsed.command)
   }
 }
 
@@ -92,6 +93,15 @@ function create_report(gh: GitHubAPI, owner: string, repo: string, issue: IssueC
   }
 }
 
+function fallback(command?: string) {
+  if(command) {
+    core.info(`unknown command ${command}`)
+  }
+  else {
+    core.info(`no command`)
+  }
+}
+
 //#region commands
 interface Context {
   gh: GitHubAPI,
@@ -106,7 +116,9 @@ async function echo(this: Context, content: string, _options: EchoOptions) {
   await report(content)
 }
 
-interface ReleaseOptions {}
+interface ReleaseOptions {
+  'dry-run'?: string
+}
 /**
  * Release version
  * 
