@@ -265,7 +265,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
    * run build
    */
   async function build() {
-    if('boolean' === typeof options.build) {
+    if(undefined === options.build || 'boolean' === typeof options.build) {
       if(false === options.build) {
         return
       }
