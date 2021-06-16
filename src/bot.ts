@@ -269,7 +269,7 @@ async function release(this: Context, version: semver.ReleaseType | string = 'pa
       if(false === options.build) {
         return
       }
-      if(pkg.script && pkg.script.build) {
+      if(pkg.scripts && pkg.scripts.build) {
         return await exec(`npm run build`)
       }
       return
